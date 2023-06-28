@@ -27,10 +27,10 @@ jobs:
         with:
           release: ${{ matrix.matlab-release }}
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+      # - name: Set up Python ${{ matrix.python-version }}
+      #   uses: actions/setup-python@v4
+      #   with:
+      #     python-version: ${{ matrix.python-version }}
 
       # - name: Install dependencies
       #   # Installing wheel package will slightly speed-up installing dependencies.
@@ -48,6 +48,12 @@ jobs:
 
       - name: Set environment variable
         run: echo "RUNNER_TEMP=${{ runner.temp }}" >> $GITHUB_ENV
+
+      - name: PWD
+        run: pwd
+
+      - name: Run MATLAB commands
+        run: matlab -nosplash -nodesktop -softwareopengl -r "ver"
 
       - name: Run MATLAB commands
         run: matlab -nosplash -nodesktop -softwareopengl -r "run('${{ github.workspace }}/matlab/startup.m')"
