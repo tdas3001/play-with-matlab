@@ -1,0 +1,53 @@
+# Copyright 2020-2023 The MathWorks, Inc
+
+# Workflow that contains jobs to test MATLAB
+name: Testing MATLAB
+
+on: workflow_dispatch
+
+
+jobs:
+  python_integration_tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8"]
+        matlab-release: ["R2023a"]
+
+    name: "Run Python Integration Tests with Python ${{matrix.python-version}}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up MATLAB ${{ matrix.matlab-release }}
+        # Use MATLAB Actions to get running MATLAB in GitHub Actions
+        uses: matlab-actions/setup-matlab@v1
+        with:
+          release: ${{ matrix.matlab-release }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # - name: Install dependencies
+      #   # Installing wheel package will slightly speed-up installing dependencies.
+      #   # Installing the package with "[dev]" flag  will install test dependecies as well,
+      #   # enabling us to run pytest.
+      #   # pip install git+https://github.com/tdas3001/matlab-proxy.git@matlab-logs
+
+      #   run: |
+      #     python3 -m pip install --upgrade pip
+      #     python3 -m pip install wheel pytest
+      #     python3 -m pip install 'jupyterlab>=3.0.0,<4.0.0a0'
+      #     python3 -m pip install .[dev]
+      #     python3 -m pip uninstall -y matlab-proxy
+      #     python3 -m pip install matlab-proxy==0.6.0
+
+      - name: Set environment variable
+        run: echo "RUNNER_TEMP=${{ runner.temp }}" >> $GITHUB_ENV
+
+      - name: Run MATLAB commands
+        run: matlab -nosplash -nodesktop -softwareopengl -r "run('${{ github.workspace }}/matlab/startup.m')"
