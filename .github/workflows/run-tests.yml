@@ -52,7 +52,10 @@ jobs:
       - name: PWD
         run: pwd
 
-      - name: Run MATLAB commands
+      - name: Run MATLAB batch ver
+        run: matlab -nosplash -nodesktop -softwareopengl -batch "ver"
+
+      - name: Run MATLAB ver
         run: matlab -nosplash -nodesktop -softwareopengl -r "ver"
 
       - name: Run MATLAB commands
